@@ -1,0 +1,63 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace 'com.hyapp.amplituda'
+    ndkVersion "28.0.12674087"
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.hyapp.amplituda"
+        minSdk 21
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+        project.archivesBaseName = "Amplituda"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+
+        externalNativeBuild {
+            cmake {
+                cppFlags "-fexceptions -frtti -fvisibility=hidden -ffunction-sections -fdata-sections -Wl,--gc-sections"
+                cFlags "-fexceptions -frtti -fvisibility=hidden -ffunction-sections -fdata-sections -Wl,--gc-sections"
+            }
+        }
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            moduleName "app"
+            stl "stlport_static"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    sourceSets {
+        main {
+            // let gradle pack the shared library into apk
+            jniLibs.srcDirs = ['src/main/jniLibs/ffmpeg', 'src/main/jniLibs/']
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.31.0'
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+}
